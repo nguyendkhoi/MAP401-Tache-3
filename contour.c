@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "contour.h"
 #include "image.h"
+#include "sequence_point.h"
 
 void trouver_pixel_depart(Image I, int *x_depart, int *y_depart) {
     UINT L = largeur_image(I);
@@ -62,7 +63,7 @@ void memoriser_position(int x, int y) {
     printf(" %.1f %.1f\n", (double)x, (double)y);
 }
 
-void calculer_contour(Image I) {
+void calculer_contour_ecran(Image I) {
     int x_start, y_start;
     trouver_pixel_depart(I, &x_start, &y_start);
     
@@ -100,4 +101,45 @@ void calculer_contour(Image I) {
             boucle = 0;
         }
     }
+}
+
+Liste_Point calculer_contour(Image I) {
+    Liste_Point L = creer_liste_Point_vide();
+    
+    int x_start, y_start;
+    trouver_pixel_depart(I, &x_start, &y_start);
+    
+    if (x_start == -1) {
+        return L;
+    }
+
+    int x = x_start;
+    int y = y_start;
+    int direction = 0; // 0: Est, 1: Nord, 2: Ouest, 3: Sud
+    
+    L = ajouter_element_liste_Point(L, set_point((double)x, (double)y));
+    
+    int boucle = 1;
+    while (boucle) {
+        int d_gauche = (direction + 1) % 4;
+        int d_droite = (direction + 3) % 4;
+        
+        if (est_bordure(I, x, y, d_gauche)) {
+            direction = d_gauche;
+        } else if (est_bordure(I, x, y, direction)) {
+        } else if (est_bordure(I, x, y, d_droite)) {
+            direction = d_droite;
+        } else {
+            direction = (direction + 2) % 4;
+        }
+        
+        avancer(&x, &y, direction);
+        
+        L = ajouter_element_liste_Point(L, set_point((double)x, (double)y));
+        
+        if (x == x_start && y == y_start) {
+            boucle = 0;
+        }
+    }
+    return L;
 }

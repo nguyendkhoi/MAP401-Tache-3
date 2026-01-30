@@ -155,66 +155,6 @@ void ecrire_contour(Liste_Point L)
 	
 	free(TP.tab); /* supprimer le tableau de point TP */
 }
-
-void entete_fichier_pbm(FILE *f)
-{
-	char *ligne;
-	size_t n;
-	ssize_t l_ligne;
-
-	/* se positionner en debut de fichier */
-	fseek(f, 0, SEEK_SET);
-	
-	/* lecture et test de la ligne 1 */
-	ligne = (char *)NULL;
-	n = 0;
-	l_ligne = getline(&ligne, &n, f);
-	/* la ligne est correcte si et ssi 
-	   cas - fichier cree sous Linux : ligne = {'P','1',10} 
-	     soit une chaine de 3 caracteres (le dernier est le caractere nul) 
-	   cas - fichier cree sous Windows : ligne = {'P','1',13, 10} 
-	     soit une chaine de 4 caracteres (le dernier est le caractere nul) 
-	   */
-	if (l_ligne < 3)
-	{
-		ERREUR_FATALE("entete_fichier_pbm : ligne 1 incorrecte\n");
-	}
-	if ((ligne[0] != 'P') || (ligne[1] != '1'))
-	{
-		ERREUR_FATALE("entete_fichier_pbm : ligne 1 incorrecte\n");
-	}
-	free(ligne);
-	
-	/* lecture des eventuelles lignes commençant par # */
-	BOOL boucle_ligne_commentaire = TRUE;
-	do
-	{
-		/* tester d'abord la fin de fichier */
-		if (feof(f))
-		{
-			ERREUR_FATALE("entete_fichier_pbm : fin fichier inattendue\n");
-		}
-		
-		/* lire un caractere et tester par rapport à '#' */
-		char c;
-		fscanf(f, "%c", &c);
-		if (c=='#')
-		{
-			/* lire le reste de la ligne */
-			ligne = (char *)NULL;
-			n = 0;
-			l_ligne = getline(&ligne, &n, f);
-			free(ligne);
-		}
-		else
-		{
-			/* reculer d'un caractère dans f */
-			fseek(f, -1, SEEK_CUR);
-			boucle_ligne_commentaire = FALSE;
-		}
-	} while (boucle_ligne_commentaire);
-	
-}
   
 /* lire l'image dans le fichier dont le nom est nom_f
    s'il y a une erreur dans le fichier le programme s'arrete en affichant

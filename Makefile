@@ -51,14 +51,14 @@ all : $(EXECUTABLES)
 # Compilation du module
 sequence_point.o : sequence_point.c sequence_point.h
 
-test.o : test.c contour.h image.h
+test.o : test.c contour.h image.h sequence_point.h
 
-contour.o: contour.c contour.h image.h
+contour.o: contour.c contour.h image.h sequence_point.h
 
 image.o: image.c image.h
 
 # Edition des liens
-test : test.o contour.o image.o
+test : test.o contour.o image.o sequence_point.o
 	@echo ""
 	@echo "---------------------------------------------"
 	@echo "Creation de l'executable "$@
