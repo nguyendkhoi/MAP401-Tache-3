@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
     int h = hauteur_image(I);
 
     fprintf(f, "%%!PS-Adobe-3.0 EPSF-3.0\n");
-    fprintf(f, "%%%%BoundingBox 0 0 %d %d\n", w, h);
+    fprintf(f, "%%%%BoundingBox: 0 0 %d %d\n", w, h);
 
     fprintf(f, "/l {lineto} def\n");
     fprintf(f, "/m {moveto} def\n");
@@ -48,8 +48,6 @@ int main(int argc, char **argv) {
     }
 
     fprintf(f, "%f %f l\n", P.x, P.y);
-
-    fprintf(f, "0 setlinewidth\n");
 
     if (strcmp(argv[2], "1") == 0) {
         fprintf(f, "s\n");
